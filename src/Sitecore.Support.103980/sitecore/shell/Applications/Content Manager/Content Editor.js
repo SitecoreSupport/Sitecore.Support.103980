@@ -1448,6 +1448,23 @@ scContentEditor.prototype.getValidator = function () {
     return null;
 }
 
+// #region Sitecore Support fix the issue #103980
+function registerFieldsEditorValidationFix() {
+    
+    var fieldEditorElements = document.getElementsByClassName("scEditorFieldMarker");
+
+    var validateFieldsEditor = function () {
+        setTimeout(function () { scForm.postRequest("", "", "", "ValidateItem", null, true); }, 500);
+    };
+
+    if (fieldEditorElements.length !== 0) {
+        for (var i = 0; i < fieldEditorElements.length; i++) {
+            fieldEditorElements[i].addEventListener("mousedown", validateFieldsEditor, false);
+        }
+    }
+}
+// #endregion Sitecore Support fix the issue #103980
+
 scContentEditor.prototype.renderValidators = function (result, frequency) {
     var validator = this.getValidator();
     validator.innerHTML = result;
@@ -2169,6 +2186,10 @@ function scContentEditorUpdated() {
         scForm.browser.initializeFixsizeElements(true);
         scGeckoRelayout();
     }
+
+    // #region Sitecore Support fix the issue #103980
+    registerFieldsEditorValidationFix();
+    // #endregion Sitecore Support fix the issue # 103980
 }
 
 function MultipleTextSource(sources) {
